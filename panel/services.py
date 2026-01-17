@@ -17,6 +17,7 @@ class SystemService:
                 cwd=cwd,
                 capture_output=True,
                 text=True,
+                stdin=subprocess.DEVNULL, # Fix for [Errno 6] No such device or address in non-TTY envs
                 check=False # We handle errors manually
             )
             return {
