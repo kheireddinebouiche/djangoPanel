@@ -109,10 +109,19 @@ server {
     }
 
     location /static/ {
-        alias $INSTALL_DIR/static/;
+        alias /var/www/djangopanel/static/;
     }
 }
 EOF
+
+# Ensure static directory permissions
+echo "Fixing static files permissions..."
+sudo mkdir -p /var/www/djangopanel/static
+# Run collectstatic again to populate the new path (settings.py now points there)
+python manage.py collectstatic --noinput
+# Give ownership to www-data (Nginx user) just in case, or make world readable
+sudo chown -R www-data:www-data /var/www/djangopanel/static
+sudo chmod -R 755 /var/www/djangopanel/static
 
 # Remove default Nginx site if it exists to avoid conflicts
 if [ -f /etc/nginx/sites-enabled/default ]; then

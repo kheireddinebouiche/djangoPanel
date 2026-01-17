@@ -116,4 +116,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+import os
+if os.name == 'nt':
+    STATIC_ROOT = BASE_DIR / 'static'
+else:
+    # On VPS/Linux, use a global path accessible by Nginx
+    STATIC_ROOT = Path('/var/www/djangopanel/static')
