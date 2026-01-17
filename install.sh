@@ -15,6 +15,13 @@ echo "Updating system packages..."
 sudo apt-get update
 sudo apt-get install -y python3-venv python3-pip python3-full nginx git acl libpq-dev
 
+# Stop Apache2 if it exists (common conflict on VPS)
+if systemctl is-active --quiet apache2; then
+    echo "Apache2 detected. Stopping and disabling Apache2 to free up Port 80..."
+    sudo systemctl stop apache2
+    sudo systemctl disable apache2
+fi
+
 # 2. Setup User & Directory
 INSTALL_DIR="$HOME/djangoPanel"
 
