@@ -170,7 +170,12 @@ class DeployService:
                  # If sudo fails, we just log it. This is expected on non-root or limited setups.
                  log(f"Sudo Nginx failed (permissions?): {res['stderr']}")
 
-            # Write Systemd
+            # Ensure Gunicorn is installed (critical for the service to run)
+            # Even if it's not in requirements.txt
+            log("Ensuring Gunicorn is installed...")
+            res = SystemService.run_command(f'"{venv_bin / "pip"}" install gunicorn', cwd=project_path)
+            
+            # Systemd Service
             service_conf = ConfigGenerator.generate_gunicorn_service(project, venv_path, project_path)
             service_name = f"{project.name}_gunicorn.service"
             tmp_service = f"/tmp/{service_name}"
@@ -178,6 +183,15 @@ class DeployService:
                 f.write(service_conf)
             
             res = SystemService.run_command(f"sudo mv {tmp_service} /etc/systemd/system/{service_name} && sudo systemctl daemon-reload && sudo systemctl enable {service_name} && sudo systemctl restart {service_name}", cwd=project_path)
+            
+            # Verify Service Status
+            res = SystemService.run_command(f"sudo systemctl is-active {service_name}")
+            if not res['success']:
+                log(f"Service failed to start. Logs:")
+                # Fetch recent logs for this service
+                log_res = SystemService.run_command(f"sudo journalctl -u {service_name} --no-pager -n 20")
+                log(log_res['stdout'])
+                raise Exception("Gunicorn Application Service failed to start.")
              
             # Restart Nginx
             # Verify config first
