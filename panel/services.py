@@ -180,7 +180,16 @@ class DeployService:
             res = SystemService.run_command(f"sudo mv {tmp_service} /etc/systemd/system/{service_name} && sudo systemctl daemon-reload && sudo systemctl enable {service_name} && sudo systemctl restart {service_name}", cwd=project_path)
              
             # Restart Nginx
-            SystemService.run_command("sudo systemctl restart nginx")
+            # Verify config first
+            res = SystemService.run_command("sudo nginx -t")
+            if not res['success']:
+                log(f"Nginx config syntax error: {res['stderr']}")
+                raise Exception(f"Generated Nginx config is invalid: {res['stderr']}")
+
+            res = SystemService.run_command("sudo systemctl restart nginx")
+            if not res['success']:
+                log(f"Nginx failed to reload: {res['stderr']}")
+                raise Exception(f"Nginx restart failed. Check system logs.")
 
             log("Deployment Successful!")
             deployment.status = 'success'
