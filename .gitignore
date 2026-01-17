@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.env
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Static files (collected)
+# We ignore the root static directory where collectstatic outputs files
+/static/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
