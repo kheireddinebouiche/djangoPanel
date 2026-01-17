@@ -264,6 +264,42 @@ class FileService:
         except Exception as e:
             return None, str(e)
 
+    @staticmethod
+    def read_file(project, subpath):
+        """Reads file content."""
+        base_dir = DeployService.BASE_DIR / project.name
+        target_file = (base_dir / subpath).resolve()
+        
+        if not str(target_file).startswith(str(base_dir.resolve())):
+            return None, "Access denied."
+            
+        if not target_file.exists() or not target_file.is_file():
+            return None, "File not found."
+            
+        try:
+            with open(target_file, 'r', encoding='utf-8') as f:
+                return f.read(), None
+        except UnicodeDecodeError:
+            return None, "Binary file detected. Cannot edit."
+        except Exception as e:
+            return None, str(e)
+
+    @staticmethod
+    def save_file(project, subpath, content):
+        """Saves content to file."""
+        base_dir = DeployService.BASE_DIR / project.name
+        target_file = (base_dir / subpath).resolve()
+        
+        if not str(target_file).startswith(str(base_dir.resolve())):
+            return False, "Access denied."
+            
+        try:
+            with open(target_file, 'w', encoding='utf-8') as f:
+                f.write(content)
+            return True, None
+        except Exception as e:
+            return False, str(e)
+
 class ConsoleService:
     @staticmethod
     def run_command(project, command):

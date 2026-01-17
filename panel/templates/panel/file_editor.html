@@ -1,0 +1,35 @@
+{% extends 'panel/base.html' %}
+
+{% block content %}
+<div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <a href="{% url 'project_files' project.id %}?path={{ path|slice:':-len(filename)' }}" style="color: var(--text-secondary);">&larr; Back to Files</a>
+    <h2 style="margin: 0;">Editing: {{ filename }}</h2>
+</div>
+
+<div class="glass-container" style="padding: 2rem;">
+    <form method="POST">
+        {% csrf_token %}
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">File Content</label>
+            <textarea name="content" style="
+                width: 100%;
+                height: 60vh;
+                background: #1e1e1e;
+                color: #d4d4d4;
+                font-family: 'Consolas', 'Monaco', monospace;
+                padding: 1rem;
+                border-radius: 6px;
+                border: 1px solid rgba(255,255,255,0.1);
+                resize: vertical;
+                font-size: 0.9rem;
+                line-height: 1.5;
+            " spellcheck="false">{{ content }}</textarea>
+        </div>
+        
+        <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+            <a href="{% url 'project_files' project.id %}?path={{ path }}" class="btn" style="background: transparent; color: var(--text-secondary);">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

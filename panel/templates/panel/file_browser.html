@@ -34,7 +34,7 @@
         {% endif %}
 
         {% for item in files %}
-        <a href="{% if item.is_dir %}{% url 'project_files' project.id %}?path={{ item.path }}{% else %}#{% endif %}" 
+        <a href="{% if item.is_dir %}{% url 'project_files' project.id %}?path={{ item.path }}{% else %}{% url 'project_file_edit' project.id %}?path={{ item.path }}{% endif %}" 
            style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border-radius: 6px; color: var(--text-primary); text-decoration: none; transition: background 0.2s; border-bottom: 1px solid rgba(255,255,255,0.02);"
            onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
             <div style="display: flex; align-items: center; gap: 1rem;">

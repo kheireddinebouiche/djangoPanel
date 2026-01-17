@@ -149,3 +149,29 @@ def project_terminal(request, project_id):
             return JsonResponse({'error': str(e)}, status=500)
             
     return render(request, 'panel/terminal.html', {'project': project})
+
+def project_file_edit(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    subpath = request.GET.get('path', '')
+    
+    from .services import FileService
+    
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        success, error = FileService.save_file(project, subpath, content)
+        if success:
+            messages.success(request, "File saved successfully.")
+        else:
+            messages.error(request, f"Error saving file: {error}")
+            
+    content, error = FileService.read_file(project, subpath)
+    if error:
+        messages.error(request, error)
+        return redirect('project_files', project_id=project.id)
+        
+    return render(request, 'panel/file_editor.html', {
+        'project': project,
+        'path': subpath,
+        'content': content,
+        'filename': subpath.split('/')[-1]
+    })
