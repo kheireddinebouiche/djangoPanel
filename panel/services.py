@@ -34,6 +34,8 @@ class SystemService:
                 'returncode': -1
             }
 
+import getpass
+
 class ConfigGenerator:
     @staticmethod
     def generate_nginx_config(project):
@@ -66,7 +68,7 @@ Description=Gunicorn daemon for {project.name}
 After=network.target
 
 [Service]
-User={os.getlogin()}
+User={getpass.getuser()}
 Group=www-data
 WorkingDirectory={project_path}
 ExecStart={venv_path}/bin/gunicorn --workers 3 --bind 127.0.0.1:{project.port} config.wsgi:application
