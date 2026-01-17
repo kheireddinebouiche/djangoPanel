@@ -107,6 +107,12 @@ server {
 }
 EOF
 
+# Remove default Nginx site if it exists to avoid conflicts
+if [ -f /etc/nginx/sites-enabled/default ]; then
+    echo "Removing default Nginx site configuration..."
+    sudo rm /etc/nginx/sites-enabled/default
+fi
+
 sudo ln -sf /etc/nginx/sites-available/djangopanel /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
