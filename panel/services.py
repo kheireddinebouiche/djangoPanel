@@ -40,12 +40,15 @@ class ConfigGenerator:
     @staticmethod
     def generate_nginx_config(project):
         """Generates Nginx config string."""
+        # Sanitize domain (remove http/https/trailing slashes)
+        clean_domain = project.domain.lower().replace('http://', '').replace('https://', '').strip('/')
+        
         # Using a very permissive regex for static alias for now
-        static_path = f"/var/www/{project.domain}/static/"
+        static_path = f"/var/www/{clean_domain}/static/"
         
         return f"""server {{
     listen 80;
-    server_name {project.domain};
+    server_name {clean_domain};
 
     location / {{
         proxy_pass http://127.0.0.1:{project.port};
