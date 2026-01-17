@@ -122,3 +122,8 @@ if os.name == 'nt':
 else:
     # On VPS/Linux, use a global path accessible by Nginx
     STATIC_ROOT = Path('/var/www/djangopanel/static')
+
+# Ensure Django finds the static files in our app even if structure is loose
+STATICFILES_DIRS = [
+    BASE_DIR / "panel" / "static",
+]
