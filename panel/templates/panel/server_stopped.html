@@ -1,0 +1,12 @@
+{% extends 'panel/base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-top: 5rem;">
+    <h1 style="color: var(--text-primary); margin-bottom: 1rem;">Server Stopped</h1>
+    <p style="color: var(--text-secondary);">The Django development server has been shut down.</p>
+    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 2rem;">
+        To restart, go to your terminal and run:<br>
+        <code style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px; display: inline-block; margin-top: 0.5rem;">python manage.py runserver</code>
+    </p>
+</div>
+{% endblock %}

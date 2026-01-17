@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django VPS Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'panel/style.css' %}">
+</head>
+<body>
+    <div class="main-layout">
+        <aside class="sidebar glass-container" style="border-radius: 0; border-left: none; border-top: none; border-bottom: none;">
+            <div style="margin-bottom: 3rem;">
+                <h2 style="font-weight: 700; background: linear-gradient(to right, #3b82f6, #8b5cf6); -webkit-background-clip: text; color: transparent;">VPS Panel</h2>
+            </div>
+            <nav style="display: flex; flex-direction: column; gap: 1rem;">
+                <a href="{% url 'dashboard' %}" class="btn" style="background: rgba(255,255,255,0.05); color: white;">Dashboard</a>
+                <a href="{% url 'create_project' %}" class="btn" style="background: transparent; color: var(--text-secondary); justify-content: start;">+ New Project</a>
+                <a href="{% url 'stop_server' %}" class="btn" onclick="return confirm('Are you sure you want to stop the server?');" style="background: transparent; color: #ef4444; justify-content: start; margin-top: auto;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+                    Stop Server
+                </a>
+                <form action="{% url 'update_panel' %}" method="POST" style="width: 100%;" onsubmit="return confirm('Update Panel? This will restart the service.');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn" style="background: transparent; color: var(--accent-color); justify-content: start; width: 100%; border: none; cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+                        Update Panel
+                    </button>
+                </form>
+            </nav>
+        </aside>
+        
+        <main class="content">
+            {% if messages %}
+                <div style="margin-bottom: 2rem;">
+                    {% for message in messages %}
+                        <div class="glass-container" style="padding: 1rem; border-left: 4px solid var(--accent-color);">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

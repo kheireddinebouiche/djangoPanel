@@ -1,0 +1,33 @@
+{% extends 'panel/base.html' %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Dashboard</h1>
+    <a href="{% url 'create_project' %}" class="btn btn-primary">Deploy New Project</a>
+</div>
+
+<div class="card-grid">
+    {% for project in projects %}
+    <div class="glass-container project-card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <h3 style="margin: 0;">{{ project.name }}</h3>
+            <span class="status-badge {% if project.is_active %}status-active{% else %}status-inactive{% endif %}">
+                {% if project.is_active %}Active{% else %}Inactive{% endif %}
+            </span>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">{{ project.domain }}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">Port: {{ project.port }}</span>
+            <a href="{% url 'project_detail' project.id %}" style="font-weight: 500;">Manage &rarr;</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="glass-container" style="grid-column: 1 / -1; padding: 4rem; text-align: center;">
+        <h3 style="color: var(--text-secondary);">No projects deployed yet.</h3>
+        <p>Start by deploying your first Django application.</p>
+        <br>
+        <a href="{% url 'create_project' %}" class="btn btn-primary">Create Project</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

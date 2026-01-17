@@ -1,0 +1,102 @@
+{% extends 'panel/base.html' %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <a href="{% url 'project_detail' project.id %}" style="color: var(--text-secondary);">&larr; Back to Project</a>
+</div>
+
+<div class="glass-container" style="padding: 2rem; height: 70vh; display: flex; flex-direction: column;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+        <h2 style="margin: 0;">Console</h2>
+        <span style="color: var(--text-secondary); font-size: 0.9rem;">{{ project.name }} @ venv</span>
+    </div>
+
+    <div id="terminal-output" style="
+        flex: 1; 
+        background: #1e1e1e; 
+        color: #d4d4d4; 
+        font-family: 'Consolas', 'Monaco', monospace; 
+        padding: 1rem; 
+        border-radius: 6px; 
+        overflow-y: auto; 
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255,255,255,0.1);
+        font-size: 0.9rem;
+    ">
+        <div style="color: var(--accent-color);">Django Panel Console - {{ project.name }}</div>
+        <div style="color: var(--text-secondary);">Type commands to execute in the project environment.</div>
+        <div style="color: var(--text-secondary); margin-bottom: 1rem;">Note: Interactive commands (vim, etc) are not supported.</div>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+        <span style="color: var(--success-color); font-family: monospace; align-self: center; font-weight: bold;">$</span>
+        <input type="text" id="command-input" placeholder="Type command and press Enter..." style="
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.75rem;
+            color: white;
+            border-radius: 4px;
+            font-family: monospace;
+        " autofocus>
+        <button id="send-btn" class="btn btn-primary" style="padding: 0.5rem 1rem;">Run</button>
+    </div>
+</div>
+
+<script>
+    const outputDiv = document.getElementById('terminal-output');
+    const input = document.getElementById('command-input');
+    const sendBtn = document.getElementById('send-btn');
+    
+    function appendLine(text, style = '') {
+        const div = document.createElement('div');
+        div.textContent = text;
+        if (style) div.style = style;
+        outputDiv.appendChild(div);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    }
+    
+    function sendCommand() {
+        const command = input.value.trim();
+        if (!command) return;
+        
+        appendLine(`$ ${command}`, 'color: #fff; font-weight: bold; margin-top: 0.5rem;');
+        input.value = '';
+        input.disabled = true;
+        
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({command: command})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                appendLine(`Error: ${data.error}`, 'color: #ef4444;');
+            } else {
+                if (data.stdout) appendLine(data.stdout);
+                if (data.stderr) appendLine(data.stderr, 'color: #ef4444;');
+                if (!data.success && !data.stderr) appendLine(`Process exited with code ${data.returncode}`, 'color: #f59e0b;');
+            }
+        })
+        .catch(err => {
+            appendLine(`Request failed: ${err}`, 'color: #ef4444;');
+        })
+        .finally(() => {
+            input.disabled = false;
+            input.focus();
+        });
+    }
+
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendCommand();
+        }
+    });
+    
+    sendBtn.addEventListener('click', sendCommand);
+</script>
+{% endblock %}
