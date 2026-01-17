@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-fb=t(_if!$^b2ynb1lbxf&x@in^ev_2m@@-_(^n_a&0*he)+p!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['184.174.33.78']
+ALLOWED_HOSTS = ['184.174.33.78','app.insim360.com']
 
 
 # Application definition
